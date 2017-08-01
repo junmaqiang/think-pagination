@@ -72,7 +72,11 @@ module.exports = (pagerData, ctx, options) => {
     desc: false, // show desc
     pageNum: 2,
     url: '',
-    class: '',
+    class: {
+      ul: 'pagination',
+      li: 'page-item',
+      a: 'page-link',
+    },
     text: {
       next: 'Next',
       prev: 'Prev',
@@ -84,44 +88,44 @@ module.exports = (pagerData, ctx, options) => {
   const currentPage = pagerData.currentPage | 0 || 1;
 
   let html = `<ul class="pagination">`;
-  if (options.class) {
-    html = `<ul class="pagination ${options.class}">`;
+  if (options.class.ul) {
+    html = `<ul class="pagination ${options.class.ul}">`;
   }
   if (options.desc) {
     const total = options.text.total.replace('__COUNT__', pagerData.count).replace('__PAGE__', pagerData.totalPages);
-    html += `<li class="disabled"><span>${total}</span></li>`;
+    html += `<li class="disabled ${options.class.li}"><span>${total}</span></li>`;
   }
   if (currentPage > 1) {
-    html += `<li class="prev"><a href="${pageUrl.replace('__PAGE__', currentPage - 1)}">${options.text.prev}</a></li>`;
+    html += `<li class="prev ${options.class.li}"><a href="${pageUrl.replace('__PAGE__', currentPage - 1)}">${options.text.prev}</a></li>`;
   }
 
   const pageIndex = getPageIndex(pagerData, options);
   if (pageIndex[0] > 1) {
-    html += `<li><a href="${pageUrl.replace('__PAGE__', 1)}">1</a></li>`;
+    html += `<li class="${options.class.li}"><a class="${options.class.a}" href="${pageUrl.replace('__PAGE__', 1)}">1</a></li>`;
   }
   if (pageIndex[0] > 2) {
-    html += `<li class="disabled"><span>...</span></li>`;
+    html += `<li class="disabled ${options.class.li}"><span>...</span></li>`;
   }
 
   for (let i = 0, length = pageIndex.length; i < length; i++) {
     const p = pageIndex[i];
     if (p === currentPage) {
-      html += `<li class="active"><a href="${pageUrl.replace('__PAGE__', p)}">${p}</a></li>`;
+      html += `<li class="active ${options.class.li}"><a class="${options.class.a}" href="${pageUrl.replace('__PAGE__', p)}">${p}</a></li>`;
     } else {
-      html += `<li><a href="${pageUrl.replace('__PAGE__', p)}">${p}</a></li>`;
+      html += `<li class="${options.class.li}" ><a class="${options.class.a}" href="${pageUrl.replace('__PAGE__', p)}">${p}</a></li>`;
     }
   }
   if (pageIndex.length > 1) {
     const last = pageIndex[pageIndex.length - 1];
     if (last < (pagerData.totalPages - 1)) {
-      html += `<li class="disabled"><span>...</span></li>`;
+      html += `<li class="disabled ${options.class.li}"><span>...</span></li>`;
     }
     if (last < pagerData.totalPages) {
-      html += `<li><a href="${pageUrl.replace('__PAGE__', pagerData.totalPages)}">${pagerData.totalPages}</a></li>`;
+      html += `<li class="${options.class.li}"><a class="${options.class.a}" href="${pageUrl.replace('__PAGE__', pagerData.totalPages)}">${pagerData.totalPages}</a></li>`;
     }
   }
   if (currentPage < pagerData.totalPages) {
-    html += `<li class="next"><a href="${pageUrl.replace('__PAGE__', currentPage + 1)}">${options.text.next}</a></li>`;
+    html += `<li class="next ${options.class.li}"><a class="${options.class.a}" href="${pageUrl.replace('__PAGE__', currentPage + 1)}">${options.text.next}</a></li>`;
   }
   return html;
 };
